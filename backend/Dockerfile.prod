@@ -1,0 +1,14 @@
+FROM node:alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json /usr/src/app/
+COPY prisma /usr/src/app/prisma/
+COPY tsconfig.json /usr/src/app/
+COPY . /usr/src/app
+
+RUN cd /usr/src/app && npm ci
+RUN cd /usr/src/app && npx prisma generate
+RUN cd /usr/src/app && npm run build
+
+CMD cd /usr/src/app && npm start
