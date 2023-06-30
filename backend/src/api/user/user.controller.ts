@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt';
 
 import db from '../../db';
 
-import { SECRET_KEY, SALT_ROUNDS } from './../../utils/config';
+import { env } from './../../utils/config';
 import MessageResponse from './../../interfaces/MessageResponse';
 
 export const register = async (req: Request, res: Response<MessageResponse>, next: NextFunction) => {
@@ -21,7 +21,7 @@ export const register = async (req: Request, res: Response<MessageResponse>, nex
         if (exists) {
             throw new Error(`Username ${username} is already taken.`);
         }
-        const hash = await bcrypt.hash(password, SALT_ROUNDS);
+        const hash = await bcrypt.hash(password, env.SALT_ROUNDS);
         await db.user.create({
             data: {
                 username: username,
@@ -48,7 +48,7 @@ export const login = async (req: Request, res: Response<MessageResponse>, next: 
                 if (err) {
                     throw new Error(err);
                 }
-                const token = jwt.sign(user, SECRET_KEY);
+                const token = jwt.sign(user, env.SECRET_KEY);
 
                 return res.status(200).json({ message: token });
             })
@@ -119,7 +119,7 @@ export const updateUser = async (req: Request, res: Response<MessageResponse>, n
         let hash = '';
         
         if (newpassword) {
-            hash = await bcrypt.hash(newpassword, SALT_ROUNDS);
+            hash = await bcrypt.hash(newpassword, env.SALT_ROUNDS);
         }
         await db.user.update({
             where: {

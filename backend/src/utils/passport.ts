@@ -4,7 +4,7 @@ import passport from 'passport';
 import bcrypt from 'bcrypt';
 import db from '../db';
 
-import { SECRET_KEY } from './../utils/config';
+import { env } from '../utils/config';
 
 const passportJWT = require('passport-jwt');
 const JWTStrategy   = passportJWT.Strategy;
@@ -36,7 +36,7 @@ passport.use(strategy);
 
 passport.use(new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey   : SECRET_KEY
+        secretOrKey   : env.SECRET_KEY
     },
     async (jwtPayload: User, done: any) => {
         const user: User | null = await db.user.findFirst({
